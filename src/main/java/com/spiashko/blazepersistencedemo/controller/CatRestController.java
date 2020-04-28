@@ -3,6 +3,7 @@ package com.spiashko.blazepersistencedemo.controller;
 import com.spiashko.blazepersistencedemo.repository.CatRepository;
 import com.spiashko.blazepersistencedemo.view.CatCreateView;
 import com.spiashko.blazepersistencedemo.view.CatSimpleView;
+import com.spiashko.blazepersistencedemo.view.CatWithOwnerView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +26,26 @@ public class CatRestController {
         return ResponseEntity.ok(catCreateView.getId().toString());
     }
 
+    /**
+     * NOT WORKING
+     * @return
+     */
     @RequestMapping(path = "/cats", method = RequestMethod.GET)
-    public List<CatSimpleView> findAll() {
-        List<CatSimpleView> resultPage = catRepository.findAll();
+    public List<CatWithOwnerView> findAll() {
+        List<CatWithOwnerView> resultPage = catRepository.findAll(CatWithOwnerView.class);
         return resultPage;
     }
 
+    @RequestMapping(path = "/simple-cats", method = RequestMethod.GET)
+    public List<CatSimpleView> findAllSimple() {
+        List<CatSimpleView> resultPage = catRepository.findAllSimple();
+        return resultPage;
+    }
+
+    @RequestMapping(path = "/with-owners-cats", method = RequestMethod.GET)
+    public List<CatWithOwnerView> findAllWithOwner() {
+        List<CatWithOwnerView> resultPage = catRepository.findAllWithOwner();
+        return resultPage;
+    }
 
 }
