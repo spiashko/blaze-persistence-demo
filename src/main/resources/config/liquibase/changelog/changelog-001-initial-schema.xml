@@ -1,0 +1,53 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="siarhei.piashko" id="changelog-001-person">
+        <sql>
+            create table person (
+            id SERIAL PRIMARY KEY,
+
+            name TEXT NOT NULL
+            );
+        </sql>
+        <rollback>
+            drop table person;
+        </rollback>
+    </changeSet>
+
+    <changeSet author="siarhei.piashko" id="changelog-001-cat">
+        <sql>
+            create table cat (
+            id SERIAL PRIMARY KEY,
+
+            name TEXT NOT NULL,
+            age INTEGER NOT NULL,
+
+            fk_owner INTEGER REFERENCES person (id) NOT NULL,
+            fk_mother INTEGER REFERENCES cat (id),
+            fk_father INTEGER REFERENCES cat (id)
+            );
+        </sql>
+        <rollback>
+            drop table cat;
+        </rollback>
+    </changeSet>
+
+
+
+    <changeSet author="siarhei.piashko" id="changelog-001-person">
+        <sql>
+            create table person (
+            id SERIAL PRIMARY KEY,
+
+            name TEXT NOT NULL
+            );
+        </sql>
+        <rollback>
+            drop table person;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
