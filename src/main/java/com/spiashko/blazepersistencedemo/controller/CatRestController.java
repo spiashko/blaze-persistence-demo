@@ -1,5 +1,6 @@
 package com.spiashko.blazepersistencedemo.controller;
 
+import com.blazebit.persistence.view.EntityViewSetting;
 import com.spiashko.blazepersistencedemo.repository.CatRepository;
 import com.spiashko.blazepersistencedemo.view.CatCreateView;
 import com.spiashko.blazepersistencedemo.view.CatSimpleView;
@@ -28,11 +29,12 @@ public class CatRestController {
 
     /**
      * NOT WORKING
+     *
      * @return
      */
     @RequestMapping(path = "/cats", method = RequestMethod.GET)
     public List<CatWithOwnerView> findAll() {
-        List<CatWithOwnerView> resultPage = catRepository.findAll(CatWithOwnerView.class);
+        List<CatWithOwnerView> resultPage = catRepository.findAll(EntityViewSetting.create(CatWithOwnerView.class));
         return resultPage;
     }
 
