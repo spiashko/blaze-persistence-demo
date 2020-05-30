@@ -1,6 +1,5 @@
 package com.spiashko.blazepersistencedemo.repository;
 
-import com.blazebit.persistence.view.EntityViewSetting;
 import com.spiashko.blazepersistencedemo.model.Cat;
 import com.spiashko.blazepersistencedemo.view.CatCreateView;
 import com.spiashko.blazepersistencedemo.view.CatSimpleView;
@@ -15,7 +14,7 @@ public interface CatRepository extends Repository<Cat, Long> {
 
     List<CatWithOwnerView> findAllWithOwner();
 
-    <T> List<T> findAll(EntityViewSetting settings);
+    <T> List<T> findAll(Class<T> clazz);
 
     CatCreateView save(CatCreateView createView);
 }

@@ -35,18 +35,24 @@
         </rollback>
     </changeSet>
 
-
-
-    <changeSet author="siarhei.piashko" id="changelog-001-person">
+    <changeSet author="siarhei.piashko" id="changelog-003-person-data">
         <sql>
-            create table person (
-            id SERIAL PRIMARY KEY,
-
-            name TEXT NOT NULL
-            );
+            insert into person (id, name)
+            values (1, 'bob');
         </sql>
         <rollback>
-            drop table person;
+            delete from person;
+        </rollback>
+    </changeSet>
+
+
+    <changeSet author="siarhei.piashko" id="changelog-004-cat-data">
+        <sql>
+            insert into cat (id, name, age, fk_owner)
+            values (1, 'cat1', 5, 1);
+        </sql>
+        <rollback>
+            delete from cat;
         </rollback>
     </changeSet>
 
