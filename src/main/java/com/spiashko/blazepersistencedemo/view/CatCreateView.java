@@ -1,15 +1,25 @@
 package com.spiashko.blazepersistencedemo.view;
 
-import com.blazebit.persistence.view.CreatableEntityView;
-import com.blazebit.persistence.view.EntityView;
+import com.blazebit.persistence.view.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spiashko.blazepersistencedemo.model.Cat;
 
 
 @CreatableEntityView
 @EntityView(Cat.class)
-public interface CatCreateView extends CatUpdateView {
+public abstract class CatCreateView implements CatSaveView {
 
-    PersonIdView getOwner();
+    @JsonIgnore
+    @Mapping("owner")
+    protected abstract PersonIdView getOwnerInternal();
+    protected abstract void setOwnerInternal(PersonIdView owner);
+    protected abstract EntityViewManager evm();
 
-    void setOwner(PersonIdView owner);
+    public void setOwnerId(Long id) {
+        setOwnerInternal(evm().getReference(PersonIdView.class, id));
+    }
+
+    public Long getOwnerId(Long id) {
+        return getOwnerInternal().getId();
+    }
 }

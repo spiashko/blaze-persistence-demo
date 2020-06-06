@@ -1,9 +1,9 @@
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/blaze_persistence_demo_db
-    username: blaze_persistence_demo_user
-    password: blaze_persistence_demo_pass
+    url: jdbc:postgresql://localhost:5432/demo
+    username: demo
+    password: demo
     hikari:
       poolName: Hikari
       auto-commit: false
