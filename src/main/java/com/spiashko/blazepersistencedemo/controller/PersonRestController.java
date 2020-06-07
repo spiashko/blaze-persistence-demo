@@ -1,8 +1,8 @@
 package com.spiashko.blazepersistencedemo.controller;
 
 import com.spiashko.blazepersistencedemo.repository.PersonRepository;
-import com.spiashko.blazepersistencedemo.view.PersonCreateView;
-import com.spiashko.blazepersistencedemo.view.PersonSimpleView;
+import com.spiashko.blazepersistencedemo.view.person.managment.PersonCreateView;
+import com.spiashko.blazepersistencedemo.view.person.retrieve.PersonSimpleView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ public class PersonRestController {
 
     @RequestMapping(path = "/persons", method = RequestMethod.GET)
     public List<PersonSimpleView> findAll() {
-        List<PersonSimpleView> result = repository.findAll();
+        List<PersonSimpleView> result = repository.findAll(PersonSimpleView.class);
         return result;
     }
 

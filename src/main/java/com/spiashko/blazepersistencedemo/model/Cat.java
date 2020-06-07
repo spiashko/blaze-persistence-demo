@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @Setter
@@ -17,18 +18,10 @@ public class Cat {
     private Long id;
 
     private String name;
-    private Integer age;
+    private LocalDate dob;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_owner")
     private Person owner;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_mother")
-    private Cat mother;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_father")
-    private Cat father;
 
 }

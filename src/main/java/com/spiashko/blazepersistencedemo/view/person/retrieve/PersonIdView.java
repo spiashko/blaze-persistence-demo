@@ -1,4 +1,4 @@
-package com.spiashko.blazepersistencedemo.view;
+package com.spiashko.blazepersistencedemo.view.person.retrieve;
 
 import com.blazebit.persistence.view.EntityView;
 import com.blazebit.persistence.view.IdMapping;
