@@ -29,7 +29,7 @@ public abstract class CatSaveView implements CatSimpleView {
         setOwnerInternal(evm().getReference(PersonIdView.class, id));
     }
 
-    public Long getOwnerId(Long id) {
+    public Long getOwnerId() {
         return getOwnerInternal().getId();
     }
 

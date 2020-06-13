@@ -1,4 +1,3 @@
-
 package com.spiashko.blazepersistencedemo.model;
 
 import lombok.Getter;
@@ -24,4 +23,7 @@ public class Person {
     @OneToMany(mappedBy = "owner")
     private Set<Cat> kittens = new HashSet<>();
 
+    public Person(String name) {
+        this.name = name;
+    }
 }

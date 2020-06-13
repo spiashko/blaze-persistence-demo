@@ -24,4 +24,9 @@ public class Cat {
     @JoinColumn(name = "fk_owner")
     private Person owner;
 
+    public Cat(String name, LocalDate dob, Person owner) {
+        this.name = name;
+        this.dob = dob;
+        this.owner = owner;
+    }
 }

@@ -25,34 +25,11 @@
             name TEXT NOT NULL,
             dob DATE NOT NULL,
 
-            fk_owner INTEGER REFERENCES person (id) NOT NULL,
-            fk_mother INTEGER REFERENCES cat (id),
-            fk_father INTEGER REFERENCES cat (id)
+            fk_owner INTEGER REFERENCES person (id) NOT NULL
             );
         </sql>
         <rollback>
             drop table cat;
-        </rollback>
-    </changeSet>
-
-    <changeSet author="siarhei.piashko" id="changelog-003-person-data">
-        <sql>
-            insert into person (name)
-            values ('bob');
-        </sql>
-        <rollback>
-            delete from person;
-        </rollback>
-    </changeSet>
-
-
-    <changeSet author="siarhei.piashko" id="changelog-004-cat-data">
-        <sql>
-            insert into cat (name, dob, fk_owner)
-            values ('Rembrandt', '2020-01-01', 1);
-        </sql>
-        <rollback>
-            delete from cat;
         </rollback>
     </changeSet>
 

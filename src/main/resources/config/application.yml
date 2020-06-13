@@ -29,3 +29,6 @@ spring:
 logging:
   level:
     net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener: DEBUG
+
+server:
+  port: 8081
