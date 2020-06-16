@@ -72,7 +72,7 @@ public class CatRestController {
     public List<CatSimpleView> findAll(
             @Parameter(hidden = true) @RequestParam(name = "filter", required = false) final Filter[] filter
     ) {
-        Specification<CatSimpleView> specification = specificationBuilder.getSpecificationForFilter(filter, FILTER_ATTRIBUTES);
+        Specification<CatSimpleView> specification = specificationBuilder.build(filter, FILTER_ATTRIBUTES);
         List<CatSimpleView> result = repository.findAll(CatSimpleView.class, specification);
         return result;
     }
@@ -84,7 +84,7 @@ public class CatRestController {
             @Parameter(hidden = true) @KeysetConfig(Cat.class) KeysetPageable keysetPageable,
             @Parameter(hidden = true) @RequestParam(name = "filter", required = false) final Filter[] filter
     ) {
-        Specification<CatSimpleView> specification = specificationBuilder.getSpecificationForFilter(filter, FILTER_ATTRIBUTES);
+        Specification<CatSimpleView> specification = specificationBuilder.build(filter, FILTER_ATTRIBUTES);
         Page<CatSimpleView> result = pageRepository.findAll(specification, keysetPageable);
         return result;
     }
