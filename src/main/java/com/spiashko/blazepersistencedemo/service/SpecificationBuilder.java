@@ -24,7 +24,7 @@ public class SpecificationBuilder {
 
     public <T> Specification<T> build(final Filter[] filter, Map<String, SerializableFormat<?>> filterAttributes) {
         if (filter == null || filter.length == 0) {
-            return null;
+            return (Specification<T>) (root, cq, cb) -> cb.and();
         }
         return (Specification<T>) (root, cq, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
