@@ -3,20 +3,21 @@ package com.spiashko.blazepersistencedemo.controller;
 import com.blazebit.persistence.spring.data.repository.KeysetPageable;
 import com.blazebit.persistence.spring.data.webmvc.EntityViewId;
 import com.blazebit.persistence.spring.data.webmvc.KeysetConfig;
-import com.blazebit.text.FormatUtils;
-import com.blazebit.text.SerializableFormat;
 import com.spiashko.blazepersistencedemo.config.BlazeFilterQueryParam;
 import com.spiashko.blazepersistencedemo.config.BlazePageableAsQueryParam;
 import com.spiashko.blazepersistencedemo.filter.Filter;
+import com.spiashko.blazepersistencedemo.filterenum.CatFilterAttributesProvider;
+import com.spiashko.blazepersistencedemo.filterenum.PersonFilterAttributesProvider;
 import com.spiashko.blazepersistencedemo.model.Cat;
-import com.spiashko.blazepersistencedemo.model.Cat_;
-import com.spiashko.blazepersistencedemo.model.Person_;
 import com.spiashko.blazepersistencedemo.repository.CatRepository;
-import com.spiashko.blazepersistencedemo.service.SpecificationBuilder;
+import com.spiashko.blazepersistencedemo.filter.SpecificationBuilder;
+import com.spiashko.blazepersistencedemo.rsql.CustomRsqlVisitor;
 import com.spiashko.blazepersistencedemo.view.cat.managment.CatCreateView;
 import com.spiashko.blazepersistencedemo.view.cat.managment.CatUpdateView;
 import com.spiashko.blazepersistencedemo.view.cat.retrieve.CatSimpleView;
 import com.spiashko.blazepersistencedemo.view.cat.retrieve.CatWithOwnerView;
+import cz.jirutka.rsql.parser.RSQLParser;
+import cz.jirutka.rsql.parser.ast.Node;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,27 +28,14 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
 public class CatRestController {
 
-    private static final Map<String, SerializableFormat<?>> FILTER_ATTRIBUTES;
-
-    static {
-        Map<String, SerializableFormat<?>> filterAttributes = new HashMap<>();
-        filterAttributes.put(Cat_.ID, FormatUtils.getAvailableFormatters().get(Long.class));
-        filterAttributes.put(Cat_.NAME, FormatUtils.getAvailableFormatters().get(String.class));
-        filterAttributes.put(Cat_.DOB, FormatUtils.getAvailableFormatters().get(LocalDate.class));
-        filterAttributes.put(Cat_.OWNER + '.' + Person_.ID, FormatUtils.getAvailableFormatters().get(Long.class));
-        FILTER_ATTRIBUTES = Collections.unmodifiableMap(filterAttributes);
-    }
-
+    private final PersonFilterAttributesProvider personFilterAttributesProvider = new PersonFilterAttributesProvider();
+    private final CatFilterAttributesProvider catFilterAttributesProvider = new CatFilterAttributesProvider();
     private final CatRepository repository;
     private final SpecificationBuilder specificationBuilder;
 
@@ -69,10 +57,11 @@ public class CatRestController {
     @BlazeFilterQueryParam
     @RequestMapping(path = "/cats", method = RequestMethod.GET)
     public List<CatSimpleView> findAll(
-            @Parameter(hidden = true) @RequestParam(name = "filter", required = false) final Filter[] filter
+            @Parameter(hidden = true) @RequestParam(name = "filter", required = false) String search
     ) {
-        Specification<Cat> specification = specificationBuilder.build(filter, FILTER_ATTRIBUTES);
-        List<CatSimpleView> result = repository.findAll(CatSimpleView.class, specification);
+        Node rootNode = new RSQLParser().parse(search);
+        Specification<Cat> spec = rootNode.accept(new CustomRsqlVisitor<>());
+        List<CatSimpleView> result = repository.findAll(CatSimpleView.class, spec);
         return result;
     }
 
@@ -83,7 +72,7 @@ public class CatRestController {
             @Parameter(hidden = true) @KeysetConfig(Cat.class) KeysetPageable keysetPageable,
             @Parameter(hidden = true) @RequestParam(name = "filter", required = false) final Filter[] filter
     ) {
-        Specification<Cat> specification = specificationBuilder.build(filter, FILTER_ATTRIBUTES);
+        Specification<Cat> specification = specificationBuilder.build(filter, catFilterAttributesProvider);
         Page<CatSimpleView> result = repository.findAll(specification, keysetPageable);
         return result;
     }

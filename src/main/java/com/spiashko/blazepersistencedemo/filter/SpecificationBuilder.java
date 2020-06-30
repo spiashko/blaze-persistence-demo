@@ -1,8 +1,10 @@
-package com.spiashko.blazepersistencedemo.service;
+package com.spiashko.blazepersistencedemo.filter;
 
 import com.blazebit.text.ParserContext;
 import com.blazebit.text.SerializableFormat;
 import com.spiashko.blazepersistencedemo.filter.Filter;
+import com.spiashko.blazepersistencedemo.filterenum.FilterAttributesProvider;
+import net.jodah.typetools.TypeResolver;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class SpecificationBuilder {
+
+    public <T> Specification<T> build(final Filter[] filter, FilterAttributesProvider<T> provider){
+        return build(filter, provider.getFilterAttributes());
+    }
 
     public <T> Specification<T> build(final Filter[] filter, Map<String, SerializableFormat<?>> filterAttributes) {
         if (filter == null || filter.length == 0) {
@@ -45,6 +51,11 @@ public class SpecificationBuilder {
                 Supplier<Comparable> highValue = () -> (Comparable) getParsed(parserContext, f.getHigh(), format);
 
                 Path<?> path = getPath(root, f);
+
+                Class<?>[] typeArguments = TypeResolver.resolveRawArguments(SerializableFormat.class, format.getClass());
+                if (!path.getJavaType().equals(typeArguments[0])) {
+                    throw new RuntimeException("formatter type and type of field didn't match");
+                }
 
                 Supplier<Expression<Comparable>> pathEC = () -> (Expression<Comparable>) path;
                 Supplier<Expression<String>> pathES = () -> (Expression<String>) path;
