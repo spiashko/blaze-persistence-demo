@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class GenericRsqlSpecBuilder<T> {
+public class GenericRsqlSpecBuilder {
 
     private final RsqlOperationSpecRegistry registry;
 
@@ -21,25 +21,28 @@ public class GenericRsqlSpecBuilder<T> {
         this.registry = new RsqlOperationSpecRegistry();
     }
 
-    public Specification<T> createSpecification(final Node node) {
+    public Specification<?> createSpecification(final Node node,
+                                                FilterAttributesProvider<?> attributesProvider) {
         if (node instanceof LogicalNode) {
-            return createSpecification((LogicalNode) node);
+            return createSpecification((LogicalNode) node, attributesProvider);
         }
         if (node instanceof ComparisonNode) {
-            return createSpecification((ComparisonNode) node);
+            return createSpecification((ComparisonNode) node, attributesProvider);
         }
         return null;
     }
 
-    public Specification<T> createSpecification(final LogicalNode logicalNode) {
+    public Specification<?> createSpecification(final LogicalNode logicalNode,
+                                                FilterAttributesProvider<?> attributesProvider) {
 
-        List<Specification<T>> specs = logicalNode.getChildren()
+        List<Specification> specs = logicalNode.getChildren()
                 .stream()
-                .map(node -> createSpecification(node))
+                .map(node -> createSpecification(node, attributesProvider))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        Specification<T> result = specs.get(0);
+        //TODO rewrite for streams
+        Specification result = specs.get(0);
         if (logicalNode.getOperator() == LogicalOperator.AND) {
             for (int i = 1; i < specs.size(); i++) {
                 result = Specification.where(result).and(specs.get(i));
@@ -53,15 +56,15 @@ public class GenericRsqlSpecBuilder<T> {
         return result;
     }
 
-    public Specification<T> createSpecification(final ComparisonNode comparisonNode,
-                                                FilterAttributesProvider<T> attributesProvider) {
-        return Specification.where(
-                new GenericRsqlSpecification<>(
-                        registry,
-                        attributesProvider,
-                        comparisonNode.getSelector(),
-                        comparisonNode.getOperator(),
-                        comparisonNode.getArguments()));
+    public Specification<?> createSpecification(final ComparisonNode comparisonNode,
+                                                FilterAttributesProvider<?> attributesProvider) {
+
+        return new GenericRsqlSpecification<>(
+                registry,
+                attributesProvider,
+                comparisonNode.getSelector(),
+                comparisonNode.getOperator(),
+                comparisonNode.getArguments());
     }
 
 }

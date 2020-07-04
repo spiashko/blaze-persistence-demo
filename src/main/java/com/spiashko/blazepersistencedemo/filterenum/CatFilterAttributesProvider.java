@@ -13,7 +13,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CatFilterAttributesProvider implements FilterAttributesProvider<Cat> {
 
+    public static final String[] ATTRIBUTES = {"id", "name", "dob", "owner.id", "owner.name"};
+
     public static final Map<String, SerializableFormat<?>> FILTER_ATTRIBUTES;
+
 
     static {
         FILTER_ATTRIBUTES = Map.of(
@@ -24,6 +27,7 @@ public class CatFilterAttributesProvider implements FilterAttributesProvider<Cat
                 "owner.name", FormatUtils.getAvailableFormatters().get(String.class)
         );
     }
+
 
     @Override
     public Map<String, SerializableFormat<?>> getFilterAttributes() {

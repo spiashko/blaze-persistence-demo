@@ -16,21 +16,24 @@ import java.util.stream.Collectors;
 public class GenericRsqlSpecification<T> implements Specification<T> {
 
     private final RsqlOperationSpecRegistry registry;
-    private final FilterAttributesProvider<T> attributesProvider;
+    private final FilterAttributesProvider<?> attributesProvider;
 
     private final String property;
     private final ComparisonOperator operator;
     private final List<String> arguments;
 
+
     @Override
     public Predicate toPredicate(final Root<T> root, final CriteriaQuery<?> query, final CriteriaBuilder builder) {
-        Path<String> propertyExpression = parseProperty(root);
-        final List<Object> args = castArguments(propertyExpression);
+        Path<String> propertyExpression = parseProperty(root, property, attributesProvider);
+        final List<Object> args = castArguments(propertyExpression, arguments);
         return registry.getSpec(operator).toPredicate(builder, propertyExpression, args);
     }
 
+    // === private
+
     //TODO review as it is done in spring data Sort and how it was done in CXF implementation
-    private Path<String> parseProperty(Root<T> root) {
+    public Path<String> parseProperty(Root<?> root, String property, FilterAttributesProvider<?> attributesProvider) {
         Path<String> path;
 
         //TODO use attributesProvider to verify propertie
@@ -83,7 +86,7 @@ public class GenericRsqlSpecification<T> implements Specification<T> {
     }
 
     //TODO check dates
-    private List<Object> castArguments(Path<?> propertyExpression) {
+    public List<Object> castArguments(Path<?> propertyExpression, List<String> arguments) {
 
         final Class<?> type = propertyExpression.getJavaType();
 

@@ -162,6 +162,13 @@
             <version>${guava.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>net.kaczmarzyk</groupId>
+            <artifactId>specification-arg-resolver</artifactId>
+            <version>2.4.1</version>
+        </dependency>
+
+
 
         <!--        <dependency>-->
 <!--            <groupId>com.spiashko</groupId>-->
