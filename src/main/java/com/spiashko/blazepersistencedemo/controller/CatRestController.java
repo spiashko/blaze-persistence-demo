@@ -11,6 +11,7 @@ import com.spiashko.blazepersistencedemo.filterenum.CatFilterAttributesProvider;
 import com.spiashko.blazepersistencedemo.filterenum.PersonFilterAttributesProvider;
 import com.spiashko.blazepersistencedemo.model.Cat;
 import com.spiashko.blazepersistencedemo.repository.CatRepository;
+import com.spiashko.blazepersistencedemo.rsql.AndPathVarEq;
 import com.spiashko.blazepersistencedemo.rsql.RsqlSpec;
 import com.spiashko.blazepersistencedemo.view.cat.managment.CatCreateView;
 import com.spiashko.blazepersistencedemo.view.cat.managment.CatUpdateView;
@@ -52,16 +53,25 @@ public class CatRestController {
         return repository.findById(cat.getId(), CatWithOwnerView.class);
     }
 
-    @BlazeFilterQueryParam
     @RequestMapping(path = "/cats", method = RequestMethod.GET)
     public List<CatSimpleView> findAll(
-//            @Parameter(hidden = true) @RequestParam(name = "filter", required = false) String search
-            @Parameter(hidden = true)
-            @RequestParam(name = "filter", required = false)
-            @RsqlSpec(CatFilterAttributesProvider.class) Specification<Cat> spec
+            @RsqlSpec Specification<Cat> spec
     ) {
-//        Node rootNode = new RSQLParser().parse(search);
-//        Specification<Cat> spec = rootNode.accept(new CustomRsqlVisitor<>(catFilterAttributesProvider));
+        List<CatSimpleView> result = repository.findAll(CatSimpleView.class, spec);
+        return result;
+    }
+
+    @Parameter(in = ParameterIn.PATH
+            , name = "ownerId"
+            , content = @Content(schema = @Schema(type = "integer")))
+    @BlazeFilterQueryParam
+    @RequestMapping(path = "/owner/{ownerId}/cats", method = RequestMethod.GET)
+    public List<CatSimpleView> findAllByOwner(
+            @Parameter(hidden = true)
+            @RsqlSpec(
+                    extensionFromPath = @AndPathVarEq(pathVar = "ownerId", attributePath = "owner.id")
+            ) Specification<Cat> spec
+    ) {
         List<CatSimpleView> result = repository.findAll(CatSimpleView.class, spec);
         return result;
     }

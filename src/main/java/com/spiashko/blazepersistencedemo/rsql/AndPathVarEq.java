@@ -5,10 +5,9 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
-public @interface RsqlSpec {
+public @interface AndPathVarEq {
 
-    String requestParamName() default "filter";
-
-    AndPathVarEq[] extensionFromPath() default {};
+    String pathVar();
+    String attributePath();
 
 }
