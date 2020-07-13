@@ -3,12 +3,7 @@ package com.spiashko.blazepersistencedemo.controller;
 import com.blazebit.persistence.spring.data.repository.KeysetPageable;
 import com.blazebit.persistence.spring.data.webmvc.EntityViewId;
 import com.blazebit.persistence.spring.data.webmvc.KeysetConfig;
-import com.spiashko.blazepersistencedemo.config.BlazeFilterQueryParam;
 import com.spiashko.blazepersistencedemo.config.BlazePageableAsQueryParam;
-import com.spiashko.blazepersistencedemo.filter.Filter;
-import com.spiashko.blazepersistencedemo.filter.SpecificationBuilder;
-import com.spiashko.blazepersistencedemo.filterenum.CatFilterAttributesProvider;
-import com.spiashko.blazepersistencedemo.filterenum.PersonFilterAttributesProvider;
 import com.spiashko.blazepersistencedemo.model.Cat;
 import com.spiashko.blazepersistencedemo.repository.CatRepository;
 import com.spiashko.blazepersistencedemo.rsql.AndPathVarEq;
@@ -33,10 +28,7 @@ import java.util.List;
 @RestController
 public class CatRestController {
 
-    private final PersonFilterAttributesProvider personFilterAttributesProvider = new PersonFilterAttributesProvider();
-    private final CatFilterAttributesProvider catFilterAttributesProvider = new CatFilterAttributesProvider();
     private final CatRepository repository;
-    private final SpecificationBuilder specificationBuilder;
 
     @RequestMapping(path = "/cats", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public CatWithOwnerView create(@RequestBody CatCreateView catCreateView) {
@@ -64,7 +56,6 @@ public class CatRestController {
     @Parameter(in = ParameterIn.PATH
             , name = "ownerId"
             , content = @Content(schema = @Schema(type = "integer")))
-    @BlazeFilterQueryParam
     @RequestMapping(path = "/owner/{ownerId}/cats", method = RequestMethod.GET)
     public List<CatSimpleView> findAllByOwner(
             @Parameter(hidden = true)
@@ -76,15 +67,13 @@ public class CatRestController {
         return result;
     }
 
-    @BlazeFilterQueryParam
     @BlazePageableAsQueryParam
     @RequestMapping(path = "/pageable-cats", method = RequestMethod.GET)
     public Page<CatSimpleView> findAllPageable(
             @Parameter(hidden = true) @KeysetConfig(Cat.class) KeysetPageable keysetPageable,
-            @Parameter(hidden = true) @RequestParam(name = "filter", required = false) final Filter[] filter
+            @RsqlSpec Specification<Cat> spec
     ) {
-        Specification<Cat> specification = specificationBuilder.build(filter, catFilterAttributesProvider);
-        Page<CatSimpleView> result = repository.findAll(specification, keysetPageable);
+        Page<CatSimpleView> result = repository.findAll(spec, keysetPageable);
         return result;
     }
 
