@@ -1,5 +1,6 @@
 package com.spiashko.blazepersistencedemo.controller;
 
+import com.blazebit.persistence.spring.data.repository.KeysetAwarePage;
 import com.blazebit.persistence.spring.data.repository.KeysetPageable;
 import com.blazebit.persistence.spring.data.webmvc.EntityViewId;
 import com.blazebit.persistence.spring.data.webmvc.KeysetConfig;
@@ -17,7 +18,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -69,11 +69,11 @@ public class CatRestController {
 
     @BlazePageableAsQueryParam
     @RequestMapping(path = "/pageable-cats", method = RequestMethod.GET)
-    public Page<CatSimpleView> findAllPageable(
+    public KeysetAwarePage<CatSimpleView> findAllPageable(
             @Parameter(hidden = true) @KeysetConfig(Cat.class) KeysetPageable keysetPageable,
             @RsqlSpec Specification<Cat> spec
     ) {
-        Page<CatSimpleView> result = repository.findAll(spec, keysetPageable);
+        KeysetAwarePage<CatSimpleView> result = repository.findAll(spec, keysetPageable);
         return result;
     }
 
