@@ -1,6 +1,5 @@
 package com.spiashko.blazepersistencedemo.swagger;
 
-import com.spiashko.blazepersistencedemo.model.Cat;
 import com.spiashko.blazepersistencedemo.rsql.RsqlSpec;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -16,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -54,7 +54,7 @@ public class RsqlSpecOperationCustomizer implements OperationCustomizer {
                 .name(rsqlSpecAnnotation.requestParamName())
                 .schema(new StringSchema());
 
-        Class<?> clazz = getEntityClass(operation, parameter);
+        Class<?> clazz = getEntityClass(parameter);
 
         registry.addCustomiser(
                 (OpenAPI openApi) -> {
@@ -71,8 +71,8 @@ public class RsqlSpecOperationCustomizer implements OperationCustomizer {
         operation.addParametersItem(parameterFilter);
     }
 
-    private Class<?> getEntityClass(Operation operation, MethodParameter parameter) {
-        return Cat.class;
+    private Class<?> getEntityClass(MethodParameter parameter) {
+        return (Class<?>) ((ParameterizedType) parameter.getGenericParameterType()).getActualTypeArguments()[0];
     }
 
 }

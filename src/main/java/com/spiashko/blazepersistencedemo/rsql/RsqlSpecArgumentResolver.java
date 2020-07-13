@@ -64,7 +64,6 @@ public class RsqlSpecArgumentResolver implements HandlerMethodArgumentResolver {
             String pathVar = andPathVarEq.pathVar();
 
             String pathVarValue = uriTemplateVariables.get(pathVar);
-            //TODO: convert pathVarValue?
             fullSpec = buildEqSpec(pathVarValue, attributePath).and(fullSpec);
         }
 
